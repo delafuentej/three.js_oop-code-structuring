@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import Debug from './Utils/Debug.js';
 import Sizes from './Utils/Sizes.js';
 import Time from './Utils/Time.js';
 import Resources from './Utils/Resources.js';
@@ -7,7 +8,12 @@ import Renderer  from './Renderer.js';
 import World from './World/World.js';
 import sources from './sources.js';
 
-console.log(sources)
+// At some point, it needs to destroy parts of the experience,  or even
+// the whole thing
+// It could be because the animation is done, the player moved to another level
+// the WebGl is not visible anymore or the fox is running away
+// 1. Stop time ans resize events => destroy method
+
 
 // to create a Experience Class in a singleton
 let instance = null;
@@ -27,6 +33,7 @@ export default class Experience {
         this.canvas = canvas;
         console.log(this.canvas);
         //setup
+        this.debug = new Debug();
         this.sizes = new Sizes();
         this.time = new Time();
 
@@ -68,5 +75,39 @@ export default class Experience {
        this.world.update();
        this.renderer.update();
     };
+
+    destroy(){
+        //method of EventEmitter class
+        this.sizes.off('resize');
+        this.time.off('tick');
+
+        // use the traverse method on the scene
+        this.scene.traverse((child) => {
+            // we need to dispose of geometries, materials, textures
+            // controls, passes, etc
+            if(child instanceof THREE.Mesh){
+                child.geometry.dispose();
+
+                //loop through the material propertis
+                for(const key in  child.material){
+                    const value = child.material[key]
+                    // test if there is a dispose function
+                    if(value && typeof value.dispose === 'function'){
+                        value.dispose();
+                    }
+                }
+            }
+        })
+
+        //orbit controls
+        this.camera.controls.dispose();
+
+        //renderer
+        this.renderer.instance.dispose();
+
+        if(this.debug.active){
+            this.debug.gui.destroy()
+        }
+    }
 }
 

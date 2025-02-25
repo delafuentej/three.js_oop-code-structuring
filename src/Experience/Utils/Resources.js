@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import EventEmitter from "./EventEmitter";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import EventEmitter from "./EventEmitter";
+
 
     //this class => to centralize asset loading in a dedicated
     // class that will: 
@@ -28,6 +29,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
        //loaders
        this.setLoaders();
        this.startLoading();
+      // this.sourceLoaded()
     };
     setLoaders(){
         this.loaders = {};
@@ -38,38 +40,36 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
     startLoading(){
         //load each source
-        for(const source of this.sources)
-            {
-                if(source.type === 'gltfModel')
-                {
+        for(const source of this.sources){
+            switch (source.type) {
+                case 'gltfModel':
                     this.loaders.gltfLoader.load(
-                        source.path,
-                        (file) =>
-                        {
-                            this.sourceLoaded(source, file)
+                        source.path, 
+                        (file) => {
+                        this.sourceLoaded(source, file);
                         }
-                    )
-                }
-                else if(source.type === 'texture')
-                {
+                    );
+                    break;
+                case 'texture':
                     this.loaders.textureLoader.load(
-                        source.path,
-                        (file) =>
-                        {
-                            this.sourceLoaded(source, file)
+                        source.path, 
+                        (file) => {
+                        this.sourceLoaded(source, file);
                         }
-                    )
-                }
-                else if(source.type === 'cubeTexture')
-                {
+                    );
+                    break;
+                case 'cubeTexture':
                     this.loaders.cubeTextureLoader.load(
-                        source.path,
-                        (file) =>
-                        {
-                            this.sourceLoaded(source, file)
+                        source.path, 
+                        (file) => {
+                        this.sourceLoaded(source, file);
                         }
-                    )
-                }
+                    );
+                    break;
+                default:
+                    console.warn(`Source type unknow: ${source.type}`);
+            }
+
             }
     };
 
@@ -79,8 +79,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
         this.loaded++;
 
-        if(this.loaded === this.toLoad);
-        {
+        if(this.loaded === this.toLoad){
             console.log('All sources loaded');
             this.trigger('ready');
         }

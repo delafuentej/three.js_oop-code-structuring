@@ -5,13 +5,11 @@ import Environment from "./Environment.js";
 import Floor from './Floor.js';
 import Fox from "./Fox.js";
 
-class World {
+export default class World {
     constructor() {
         this.experience = new Experience();
         this.scene = this.experience.scene;
         this.resources = this.experience.resources;
-       
-       
 
         //in the world class: retrieve the resources instance and listen
         // to the ready event before instantiating the Environment Class
@@ -20,6 +18,7 @@ class World {
             this.floor = new Floor();
             this.fox = new Fox();
             this.environment = new Environment();
+            
            
 
         })
@@ -28,8 +27,9 @@ class World {
 
     };
     update(){
-        if(this.fox) this.fox.update();
+        if(this.fox) {
+            this.fox.update();
+        }
     }
 };
 
-export default World;
