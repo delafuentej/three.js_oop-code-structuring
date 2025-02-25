@@ -63,12 +63,12 @@ export default class Environment {
         this.environmentMap = {};
         this.environmentMap.intensity = 0.4;
 
-        if(this.resources.items.environmentMapTexture){
+  
             this.environmentMap.texture = this.resources.items.environmentMapTexture;
             this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace;
             this.scene.environment = this.environmentMap.texture;
             this.scene.background = this.environmentMap.texture;
-        }
+        
        
     
         //updateMaterials method to the environmentMap property wicht will traverse
